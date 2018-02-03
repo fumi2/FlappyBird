@@ -16,6 +16,10 @@ class GameScene: SKScene {
     
     // SKView上にシーンが表示されたときに呼ばれるメソッド
     override func didMove(to view: SKView) {
+        
+        // 重力を設定
+        physicsWorld.gravity = CGVector(dx:0.0, dy:-4.0)
+        
         // 背景色を設定
         backgroundColor = UIColor(red:0.15, green:0.75, blue:0.90, alpha:1)
         
@@ -205,7 +209,7 @@ class GameScene: SKScene {
         bird.run(flap)
         
         // スプライトを追加する
-        addChild(bird) 
+        addChild(bird)
     }
     
     
