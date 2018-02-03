@@ -101,10 +101,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         else if (contact.bodyA.categoryBitMask & coinCategory) == coinCategory || (contact.bodyB.categoryBitMask & coinCategory) == coinCategory {
-            // コインスコア用の物体と衝突した
+            // コインと衝突した
             print("CoinScoreUp")
             coinScore += 1
             coinScoreLabelNode.text = "Item Score:\(coinScore)"
+            // コインに衝突した時にコインを消す
+            //let removeCoin = SKAction.removeFromParent()
+            //self.coinNode.removeChildren(in: [coin])
+            
             
             // ベストコインスコア更新か確認する --- ここから ---
             var bestCoinScore = userDefaults.integer(forKey: "COIN BEST")
@@ -371,6 +375,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // 2つのアニメーションを順に実行するアクションを作成
         let coinAnimation = SKAction.sequence([moveCoin, removeCoin])
+        
         
         // コインを生成するアクションを作成
         let createCoinAnimation = SKAction.run({
