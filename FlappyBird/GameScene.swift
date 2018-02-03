@@ -40,6 +40,16 @@ class GameScene: SKScene {
     }
     
     
+    // 画面をタップした時に呼ばれる
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // 鳥の速度をゼロにする
+        bird.physicsBody?.velocity = CGVector.zero
+        
+        // 鳥に縦方向の力を与える
+        bird.physicsBody?.applyImpulse(CGVector(dx:0, dy:15))
+    }
+    
+    
     
     func setupGround() {
         // 地面の画像を読み込む
@@ -72,6 +82,12 @@ class GameScene: SKScene {
             
             // スプライトにアクションを設定する
             sprite.run(repeatScrollGround)
+            
+            // スプライトに物理演算を設定する
+            sprite.physicsBody = SKPhysicsBody(rectangleOf: groundTexture.size())
+            
+            // 衝突の時に動かないように設定する
+            sprite.physicsBody?.isDynamic = false
             
             // スプライトを追加する
             scrollNode.addChild(sprite)
@@ -169,9 +185,22 @@ class GameScene: SKScene {
             under.position = CGPoint(x:0.0, y:under_wall_y)
             wall.addChild(under)
             
+            // スプライトに物理演算を設定する
+            under.physicsBody = SKPhysicsBody(rectangleOf: wallTexture.size())
+            
+            // 衝突の時に動かないように設定する
+            under.physicsBody?.isDynamic = false
+            
             // 上側の壁を作成
             let upper = SKSpriteNode(texture: wallTexture)
             upper.position = CGPoint(x: 0.0, y: under_wall_y + wallTexture.size().height + slit_length)
+            
+            // スプライトに物理演算を設定する
+            upper.physicsBody = SKPhysicsBody(rectangleOf: wallTexture.size())
+            
+            // 衝突の時に動かないように設定する
+            upper.physicsBody?.isDynamic = false
+            
             
             wall.addChild(upper)
             wall.run(wallAnimation)
@@ -204,6 +233,9 @@ class GameScene: SKScene {
         // スプライトを作成
         bird = SKSpriteNode(texture: birdTextureA)
         bird.position = CGPoint(x:self.frame.size.width * 0.2, y:self.frame.size.height * 0.7)
+        
+        // 物理演算を設定
+        bird.physicsBody = SKPhysicsBody(circleOfRadius: bird.size.height / 2.0)
         
         // アニメーションを設定
         bird.run(flap)
