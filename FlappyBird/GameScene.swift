@@ -28,6 +28,7 @@ class GameScene: SKScene {
         // 各種スプライトを生成する処理をメソッドに分割
         setupGround()
         setupCloud()
+        setupWall()
         
         
     }
