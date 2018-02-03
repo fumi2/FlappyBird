@@ -33,6 +33,8 @@ class GameScene: SKScene {
         
     }
     
+    
+    
     func setupGround() {
         // 地面の画像を読み込む
         let groundTexture = SKTexture(imageNamed: "ground")
