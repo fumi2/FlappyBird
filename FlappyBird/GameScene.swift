@@ -12,6 +12,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var scrollNode:SKNode!
     var wallNode:SKNode!
+    var coinNode:SKNode!
     var coin:SKSpriteNode!
     var bird:SKSpriteNode!
     
@@ -26,8 +27,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var score = 0
     var scoreLabelNode:SKLabelNode!
     var bestScoreLabelNode:SKLabelNode!
-    var itemScore = 0
-    var itemScoreLabelNode:SKLabelNode!
+    var coinScore = 0
+    var coinScoreLabelNode:SKLabelNode!
+    var bestCoinScoreLabelNode:SKLabelNode!
     let userDefaults:UserDefaults = UserDefaults.standard
     
     
@@ -95,6 +97,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 bestScore = score
                 bestScoreLabelNode.text = "Best Score:\(bestScore)"
                 userDefaults.set(bestScore, forKey: "BEST")
+                userDefaults.synchronize()
+            }
+        }
+        else if (contact.bodyA.categoryBitMask & coinCategory) == coinCategory || (contact.bodyB.categoryBitMask & coinCategory) == coinCategory {
+            // コインスコア用の物体と衝突した
+            print("CoinScoreUp")
+            coinScore += 1
+            coinScoreLabelNode.text = "Item Score:\(coinScore)"
+            
+            // ベストコインスコア更新か確認する --- ここから ---
+            var bestCoinScore = userDefaults.integer(forKey: "COIN BEST")
+            if coinScore > bestCoinScore {
+                bestCoinScore = coinScore
+                bestCoinScoreLabelNode.text = "Best Item Score:\(bestCoinScore)"
+                userDefaults.set(bestCoinScore, forKey: "COIN BEST")
                 userDefaults.synchronize()
             }
         }
@@ -324,9 +341,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bird.physicsBody?.allowsRotation = false
         
         // 衝突のカテゴリー設定
-        bird.physicsBody?.categoryBitMask = self.birdCategory
-        bird.physicsBody?.collisionBitMask = self.groundCategory | self.wallCategory
-        bird.physicsBody?.contactTestBitMask = self.groundCategory | self.wallCategory
+        bird.physicsBody?.categoryBitMask = birdCategory
+        bird.physicsBody?.collisionBitMask = groundCategory | wallCategory
+        bird.physicsBody?.contactTestBitMask = groundCategory | wallCategory
         
         // アニメーションを設定
         bird.run(flap)
@@ -335,7 +352,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(bird)
     }
     
+    
+    
     func setupCoin() {
+        
         // コインの画像を読み込む
         let coinTexture = SKTexture(imageNamed: "coin")
         coinTexture.filteringMode = .linear
@@ -354,6 +374,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // コインを生成するアクションを作成
         let createCoinAnimation = SKAction.run({
+            // コインのノードを乗せるノードを作成
+            self.coinNode = SKNode()
+            self.coinNode.position = CGPoint(
+                x: self.frame.size.width + coinTexture.size().width / 2,
+                y: 0.0
+            )
+            self.coinNode.zPosition = -51.0 // 雲より手前、地面より奥
             
             // 画面のY軸の中央値
             let center_y = self.frame.size.height / 2
@@ -372,21 +399,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             // コインを作成
             let coin = SKSpriteNode(texture: coinTexture)
-            coin.position = CGPoint(x: self.frame.size.width + coinTexture.size().width / 2, y: coin_y)
-            coin.zPosition = -51.0 // 雲より手前、地面より奥
+            coin.position = CGPoint(x:0.0, y:coin_y)
             
             // スプライトに物理演算を設定する
             coin.physicsBody = SKPhysicsBody(circleOfRadius: coin.size.height / 2.0)
+            coin.physicsBody?.isDynamic = false
             coin.physicsBody?.categoryBitMask = self.coinCategory
             coin.physicsBody?.contactTestBitMask = self.birdCategory
             
-            // 衝突の時に動かないように設定する
-            coin.physicsBody?.isDynamic = false
+            self.coinNode.addChild(coin)
             
-            coin.run(coinAnimation)
+            // スコアアップ用のノード --- ここから ---
+            //let coinScoreNode = SKNode()
+            //coinScoreNode.position = CGPoint(x:0.0, y:coin_y)
+            //coinScoreNode.physicsBody = SKPhysicsBody(circleOfRadius: coin.size.height / 2.0)
+            //coinScoreNode.physicsBody?.isDynamic = false
+            //coinScoreNode.physicsBody?.categoryBitMask = self.coinCategory
+            //coinScoreNode.physicsBody?.contactTestBitMask = self.birdCategory
             
-            self.scrollNode.addChild(coin)
-            })
+            //self.coinNode.addChild(coinScoreNode)
+            // --- ここまで追加 ---
+            
+            
+            self.coinNode.run(coinAnimation)
+            
+            self.scrollNode.addChild(self.coinNode)
+        })
         
         // 次のコイン作成までの待ち時間のアクションを作成
         let waitAnimation = SKAction.wait(forDuration: 2)
@@ -395,7 +433,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let repeatForeverAnimation = SKAction.repeatForever(SKAction.sequence([createCoinAnimation, waitAnimation]))
         
         scrollNode.run(repeatForeverAnimation)
+        
     }
+    
+    
+    
+    
+    
+    
         
     func restart() {
         score = 0
@@ -407,6 +452,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bird.zRotation = 0.0
         
         wallNode.removeAllChildren()
+        coinNode.removeAllChildren()
         
         bird.speed = 1
         scrollNode.speed = 1
@@ -431,6 +477,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let bestScore = userDefaults.integer(forKey: "BEST")
         bestScoreLabelNode.text = "Best Score:\(bestScore)"
         self.addChild(bestScoreLabelNode)
+        
+        coinScore = 0
+        coinScoreLabelNode = SKLabelNode()
+        coinScoreLabelNode.fontColor = UIColor.black
+        coinScoreLabelNode.position = CGPoint(x: 10, y: self.frame.size.height - 120)
+        coinScoreLabelNode.zPosition = 100 // 一番手前に表示する
+        coinScoreLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
+        coinScoreLabelNode.text = "Item Score:\(coinScore)"
+        self.addChild(coinScoreLabelNode)
+        
+        bestCoinScoreLabelNode = SKLabelNode()
+        bestCoinScoreLabelNode.fontColor = UIColor.black
+        bestCoinScoreLabelNode.position = CGPoint(x: 10, y: self.frame.size.height - 150)
+        bestCoinScoreLabelNode.zPosition = 100 // 一番手前に表示する
+        bestCoinScoreLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
+        
+        let bestCoinScore = userDefaults.integer(forKey: "COIN BEST")
+        bestCoinScoreLabelNode.text = "Best Item Score:\(bestCoinScore)"
+        self.addChild(bestCoinScoreLabelNode)
     }
     
     
