@@ -12,6 +12,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var scrollNode:SKNode!
     var wallNode:SKNode!
+    var coin:SKSpriteNode!
     var bird:SKSpriteNode!
     
     // 衝突判定カテゴリー ↓追加
@@ -19,11 +20,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let groundCategory: UInt32 = 1 << 1
     let wallCategory: UInt32 = 1 << 2
     let scoreCategory: UInt32 = 1 << 3
+    let coinCategory: UInt32 = 1 << 4
     
     // スコア用
     var score = 0
     var scoreLabelNode:SKLabelNode!
     var bestScoreLabelNode:SKLabelNode!
+    var itemScore = 0
+    var itemScoreLabelNode:SKLabelNode!
     let userDefaults:UserDefaults = UserDefaults.standard
     
     
@@ -49,6 +53,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setupCloud()
         setupWall()
         setupBird()
+        setupCoin()
         
         setupScoreLabel()
         
@@ -330,7 +335,68 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(bird)
     }
     
-    
+    func setupCoin() {
+        // コインの画像を読み込む
+        let coinTexture = SKTexture(imageNamed: "coin")
+        coinTexture.filteringMode = .linear
+        
+        // 移動する距離を計算
+        let moveingDistance = CGFloat(self.frame.size.width + coinTexture.size().width)
+        
+        // 画面外まで移動するアクションを作成
+        let moveCoin = SKAction.moveBy(x: -moveingDistance, y: 0, duration: 4.0)
+        
+        // 自身を取り除くアクションを作成
+        let removeCoin = SKAction.removeFromParent()
+        
+        // 2つのアニメーションを順に実行するアクションを作成
+        let coinAnimation = SKAction.sequence([moveCoin, removeCoin])
+        
+        // コインを生成するアクションを作成
+        let createCoinAnimation = SKAction.run({
+            
+            // 画面のY軸の中央値
+            let center_y = self.frame.size.height / 2
+            
+            // コインのY座標を上下ランダムにさせるときの最大値
+            let random_y_range = self.frame.size.height / 4
+            
+            // コインのY軸の下限
+            let coin_lowest_y = UInt32(center_y - coinTexture.size().height / 2 - random_y_range / 2)
+            
+            // 1〜random_y_rangeまでのランダムな整数を生成
+            let random_y = arc4random_uniform(UInt32(random_y_range))
+            
+            // Y軸の下限にランダムな値を足して、コインのY座標を決定
+            let coin_y = CGFloat(coin_lowest_y + random_y)
+            
+            // コインを作成
+            let coin = SKSpriteNode(texture: coinTexture)
+            coin.position = CGPoint(x: self.frame.size.width + coinTexture.size().width / 2, y: coin_y)
+            coin.zPosition = -51.0 // 雲より手前、地面より奥
+            
+            // スプライトに物理演算を設定する
+            coin.physicsBody = SKPhysicsBody(circleOfRadius: coin.size.height / 2.0)
+            coin.physicsBody?.categoryBitMask = self.coinCategory
+            coin.physicsBody?.contactTestBitMask = self.birdCategory
+            
+            // 衝突の時に動かないように設定する
+            coin.physicsBody?.isDynamic = false
+            
+            coin.run(coinAnimation)
+            
+            self.scrollNode.addChild(coin)
+            })
+        
+        // 次のコイン作成までの待ち時間のアクションを作成
+        let waitAnimation = SKAction.wait(forDuration: 2)
+        
+        // コインを作成->待ち時間->コインを作成を無限に繰り替えるアクションを作成
+        let repeatForeverAnimation = SKAction.repeatForever(SKAction.sequence([createCoinAnimation, waitAnimation]))
+        
+        scrollNode.run(repeatForeverAnimation)
+    }
+        
     func restart() {
         score = 0
         scoreLabelNode.text = String("Score:\(score)")
