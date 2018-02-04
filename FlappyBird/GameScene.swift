@@ -108,6 +108,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // コインに衝突した時にコインを消す
             //let removeCoin = SKAction.removeFromParent()
             //self.coinNode.removeChildren(in: [coin])
+            if  contact.bodyA.node?.name == "coin" {
+                contact.bodyA.node?.removeFromParent()
+            }
+            else if contact.bodyB.node?.name == "coin" {
+                contact.bodyB.node?.removeFromParent()
+            }
             
             
             // ベストコインスコア更新か確認する --- ここから ---
@@ -405,6 +411,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // コインを作成
             let coin = SKSpriteNode(texture: coinTexture)
             coin.position = CGPoint(x:0.0, y:coin_y)
+            coin.name = "coin"
             
             // スプライトに物理演算を設定する
             coin.physicsBody = SKPhysicsBody(circleOfRadius: coin.size.height / 2.0)
@@ -450,6 +457,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func restart() {
         score = 0
         scoreLabelNode.text = String("Score:\(score)")
+        coinScore = 0
+        coinScoreLabelNode.text = String("Item Score:\(coinScore)")
         
         bird.position = CGPoint(x: self.frame.size.width * 0.2, y: self.frame.size.height * 0.7)
         bird.physicsBody?.velocity = CGVector.zero
