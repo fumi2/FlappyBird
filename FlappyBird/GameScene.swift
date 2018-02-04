@@ -371,10 +371,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         coinTexture.filteringMode = .linear
         
         // 移動する距離を計算
-        let moveingDistance = CGFloat(self.frame.size.width + coinTexture.size().width)
+        let moveingDistance = CGFloat(self.frame.size.width + coinTexture.size().width * 3)
         
         // 画面外まで移動するアクションを作成
-        let moveCoin = SKAction.moveBy(x: -moveingDistance, y: 0, duration: 4.0)
+        let moveCoin = SKAction.moveBy(x: -moveingDistance, y: 0, duration: 5.0)
         
         // 自身を取り除くアクションを作成
         let removeCoin = SKAction.removeFromParent()
@@ -388,7 +388,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // コインのノードを乗せるノードを作成
             self.coinNode = SKNode()
             self.coinNode.position = CGPoint(
-                x: self.frame.size.width + coinTexture.size().width / 2,
+                x: self.frame.size.width + coinTexture.size().width * 3,
                 y: 0.0
             )
             self.coinNode.zPosition = -51.0 // 雲より手前、地面より奥
