@@ -34,6 +34,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     let userDefaults:UserDefaults = UserDefaults.standard
     
     
+    //var effectSound:SKAudioNode!
+    
     
     // SKView上にシーンが表示されたときに呼ばれるメソッド
     override func didMove(to view: SKView) {
@@ -44,8 +46,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
         
         // 背景色を設定
         backgroundColor = UIColor(red:0.15, green:0.75, blue:0.90, alpha:1)
-        
-        
+    
+    
+        //self.listener = bird
         
         // スクロールするスプライトの親ノード
         scrollNode = SKNode()
@@ -109,6 +112,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             print("CoinScoreUp")
             coinScore += 1
             coinScoreLabelNode.text = "Item Score:\(coinScore)"
+            
+            // コインに衝突した時に効果音を鳴らす
+            //let coinGetSound = SKAudioNode.init(fileNamed: "coinGetSound1.mp3")
+            //coinGetSound.autoplayLooped = false
+            //self.listener = bird
+            //coinNode.addChild(coinGetSound)
+            
+            // コインに衝突した時に効果音を鳴らす
+            let coinGetSound = SKAction.playSoundFileNamed("coinGetSound1.mp3", waitForCompletion: true)
+            self.run(coinGetSound)
+            
+            
             // コインに衝突した時にコインを消す
             //let removeCoin = SKAction.removeFromParent()
             //self.coinNode.removeChildren(in: [coin])
@@ -118,10 +133,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
             else if contact.bodyB.node?.name == "coin" {
                 contact.bodyB.node?.removeFromParent()
             }
-            
-            // コインに衝突した時に効果音を鳴らす
-            let seAction = SKAction.playSoundFileNamed("coin_get01.mp3", waitForCompletion: true)
-            self.run(seAction)
             
             
             // ベストコインスコア更新か確認する --- ここから ---
