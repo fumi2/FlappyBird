@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EA0536302026A675002D9713 /* coin_get01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EA05362F2026A675002D9713 /* coin_get01.mp3 */; };
 		EA12F3872024AB4300DBD863 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA12F3862024AB4300DBD863 /* AppDelegate.swift */; };
 		EA12F3892024AB4300DBD863 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA12F3882024AB4300DBD863 /* ViewController.swift */; };
 		EA12F38C2024AB4300DBD863 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA12F38A2024AB4300DBD863 /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EA05362F2026A675002D9713 /* coin_get01.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = coin_get01.mp3; sourceTree = "<group>"; };
 		EA12F3832024AB4300DBD863 /* FlappyBird.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlappyBird.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA12F3862024AB4300DBD863 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EA12F3882024AB4300DBD863 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -56,6 +58,7 @@
 		EA12F3852024AB4300DBD863 /* FlappyBird */ = {
 			isa = PBXGroup;
 			children = (
+				EA05362F2026A675002D9713 /* coin_get01.mp3 */,
 				EA12F3862024AB4300DBD863 /* AppDelegate.swift */,
 				EA12F3882024AB4300DBD863 /* ViewController.swift */,
 				EA12F38A2024AB4300DBD863 /* Main.storyboard */,
@@ -127,6 +130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA12F3912024AB4300DBD863 /* LaunchScreen.storyboard in Resources */,
+				EA0536302026A675002D9713 /* coin_get01.mp3 in Resources */,
 				EA12F38E2024AB4300DBD863 /* Assets.xcassets in Resources */,
 				EA12F38C2024AB4300DBD863 /* Main.storyboard in Resources */,
 			);

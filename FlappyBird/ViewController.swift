@@ -8,6 +8,7 @@
 
 import UIKit
 import SpriteKit
+import AVFoundation
 
 class ViewController: UIViewController {
 
@@ -29,6 +30,8 @@ class ViewController: UIViewController {
         
         // ビューにシーンを表示する
         skView.presentScene(scene)
+        
+        
     }
 
     override func didReceiveMemoryWarning() {

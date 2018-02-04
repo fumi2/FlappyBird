@@ -7,8 +7,9 @@
 //
 
 import SpriteKit
+import AVFoundation
 
-class GameScene: SKScene, SKPhysicsContactDelegate {
+class GameScene: SKScene, SKPhysicsContactDelegate, AVAudioPlayerDelegate {
     
     var scrollNode:SKNode!
     var wallNode:SKNode!
@@ -33,6 +34,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let userDefaults:UserDefaults = UserDefaults.standard
     
     
+    
     // SKView上にシーンが表示されたときに呼ばれるメソッド
     override func didMove(to view: SKView) {
         
@@ -42,6 +44,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // 背景色を設定
         backgroundColor = UIColor(red:0.15, green:0.75, blue:0.90, alpha:1)
+        
+        
         
         // スクロールするスプライトの親ノード
         scrollNode = SKNode()
@@ -114,6 +118,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             else if contact.bodyB.node?.name == "coin" {
                 contact.bodyB.node?.removeFromParent()
             }
+            
+            // コインに衝突した時に効果音を鳴らす
+            let seAction = SKAction.playSoundFileNamed("coin_get01.mp3", waitForCompletion: true)
+            self.run(seAction)
             
             
             // ベストコインスコア更新か確認する --- ここから ---
